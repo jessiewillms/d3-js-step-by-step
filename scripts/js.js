@@ -120,6 +120,7 @@ d3.csv('weekdays.csv', function(error, dataset) {
                 return (d.enabled) ? 1 : 0;
             }));
 
+            // checks if less than two squares are selected
             if (rect.attr('class') === 'disabled') {
                 rect.attr('class','');
             } else {
@@ -132,6 +133,19 @@ d3.csv('weekdays.csv', function(error, dataset) {
                 if (d.label === label) d.enabled = enabled;
                     return (d.enabled) ? d.count : 0;
             });
+
+            path = path.data(pie(dataset));
+
+            // updates the dataset + adds a transition
+            path.transition()
+                .duration(750)
+                .attrTween('d', function(d){
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        return arc(interpolate(t));
+                    }
+                })
         });
 
     /*-------------------------------------------------------------------text
