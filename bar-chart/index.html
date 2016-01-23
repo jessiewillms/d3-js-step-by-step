@@ -8,14 +8,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" href="styles/styles.css" /> -->
     <style>
-  .chart {
-    border: 1px solid red;
-  }
+    .chart {
+      padding: 15px 5px;
+    }
+    .chart rect {
+      fill: steelblue;
+    }
+
+    .chart text {
+      fill: white;
+      font: 10px sans-serif;
+      text-anchor: end;
+    }
     </style>
+
     <body>
         <div class="wrapper">
-            <div class="chart">
-            </div>
+            <div class="chart"></div>
         </div>
         <script src="scripts/vendor/d3.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
