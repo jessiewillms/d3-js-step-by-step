@@ -26,17 +26,24 @@ app.init = function() {
 var analyseData = function(data) {
 
     var epnumArry = [],
-        seasonArry = [];
+        seasonArry = [],
+        epArry = [];
 
     for (var i = 0; i < data.feed.entry.length; i++) {
+
         var epnum = data.feed.entry[i].gsx$epnum.$t,
-            season = data.feed.entry[i].gsx$season.$t;
+            season = data.feed.entry[i].gsx$season.$t,
+            ep = data.feed.entry[i].gsx$ep.$t;
 
         if (epnum != "" && epnum != NaN && epnum !== "tk") {
             epnumArry.push(parseInt(epnum));
         };
-        if (season != "" && season != NaN && season != isNaN && season  !== "tk") {
+        if (season != "" && season != NaN && season != isNaN && season !== "tk") {
             seasonArry.push(parseInt(season));
+        };
+
+        if (ep != "" && ep != NaN && ep != isNaN && season !== "tk") {
+            epArry.push(ep);
         };
 
     };
@@ -44,6 +51,9 @@ var analyseData = function(data) {
     _.each(epnumArry, function(k, i) {
         app.dataObject[k] = seasonArry[i];
     });
+
+
+    console.log(app.dataObject)
 
     makeChart(); // call the function to make the chart
 
@@ -64,7 +74,7 @@ var makeChart = function() {
             return d.size;
         })
 
-    // console.log(app.dataObject);
+    console.log(app.dataObject);
 
     var dataOb = app.dataObject;
 
@@ -88,7 +98,7 @@ var makeChart = function() {
             }
             newDataSet.push({
                 name: prop,
-                className: bubble_classname, // gets property + uses it as the classname for CSS
+                className: bubble_classname,
                 size: obj[prop] // uses key+value pair, second (val)
             });
 
@@ -106,10 +116,10 @@ var makeChart = function() {
             return !d.children;
         });
 
-        // console.log('you are here')
+    // console.log('you are here')
 
     var viz = svg.selectAll('circle')
-        .data(nodes, function(d){
+        .data(nodes, function(d) {
             return d.name;
         })
 
@@ -117,17 +127,40 @@ var makeChart = function() {
         .attr('transform', function(d) {
             return 'translate(' + d.x + ',' + d.y + ')';
         })
-        .attr('r',function(d) {
+        .attr('r', function(d) {
             return d.r;
         })
-        .attr('class',function(d) {
+        .attr('class', function(d) {
             return d.className;
         })
 
+    // create some hover! 
+
+    var tooltips = d3.select('.chart')
+        .append('div')
+        .attr('class', 'tooltip')
+
+    tooltips.append('div')
+        .attr('class', 'ep-num')
+
+    tooltips.append('div')
+        .attr('class', 'season-part')
+
+    tooltips.append('div')
+        .attr('class', 'sason-num')
+
+    var circle = svg.selectAll('circle');
+    
+    circle.on('mouseover',function( d ){
+        console.log(d);
+
+        tooltips.select('.ep-num').html( "Ep number: " +  d.name )
+        tooltips.select('.season-part').html( "Part of the season: " +  d.className )
+        tooltips.select('.sason-num').html( "Season number: " +  d.size )
+        tooltips.style('display', 'block');
+    })
 
 }
-
-
 
 $(function() {
     app.init();
