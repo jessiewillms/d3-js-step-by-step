@@ -14,11 +14,11 @@ app.init = function() {
             analyseData(data);
         })
         .fail(function() {
-            console.log("error");
+            // console.log("error");
             $('.wrap').html('Error, please refresh the page.');
         })
         .always(function() {
-            console.log("always");
+            // console.log("always");
         });
 
 }; // end init
@@ -32,10 +32,10 @@ var analyseData = function(data) {
         var epnum = data.feed.entry[i].gsx$epnum.$t,
             season = data.feed.entry[i].gsx$season.$t;
 
-        if (epnum != "" && epnum != NaN) {
+        if (epnum != "" && epnum != NaN && epnum !== "tk") {
             epnumArry.push(parseInt(epnum));
         };
-        if (season != "" && season != NaN && season != isNaN) {
+        if (season != "" && season != NaN && season != isNaN && season  !== "tk") {
             seasonArry.push(parseInt(season));
         };
 
@@ -64,18 +64,7 @@ var makeChart = function() {
             return d.size;
         })
 
-    console.log(app.dataObject);
-
-    var data = {
-        "countries_msg_vol": {
-            "CA": 170,
-            "US": 393,
-            "CU": 9,
-            "BR": 89,
-            "MX": 192,
-            "Other": 254
-        }
-    };
+    // console.log(app.dataObject);
 
     var dataOb = app.dataObject;
 
@@ -83,12 +72,23 @@ var makeChart = function() {
 
         var obj = dataOb;
 
-        var newDataSet = [];
+        var newDataSet = [],
+            bubble_classname = "";
 
         for (var prop in obj) {
+
+            // console.log(prop)
+
+            if (prop <= 7) {
+                bubble_classname = 'early'
+            } else if (prop <= 16) {
+                bubble_classname = 'mid'
+            } else {
+                bubble_classname = 'late'
+            }
             newDataSet.push({
                 name: prop,
-                className: prop.toLowerCase(), // gets property + uses it as the classname for CSS
+                className: bubble_classname, // gets property + uses it as the classname for CSS
                 size: obj[prop] // uses key+value pair, second (val)
             });
 
@@ -106,7 +106,7 @@ var makeChart = function() {
             return !d.children;
         });
 
-        console.log('you are here')
+        // console.log('you are here')
 
     var viz = svg.selectAll('circle')
         .data(nodes, function(d){
