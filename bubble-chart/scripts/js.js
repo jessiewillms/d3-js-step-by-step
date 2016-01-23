@@ -152,7 +152,7 @@ var makeChart = function() {
     var circle = svg.selectAll('circle');
     
     circle.on('mouseover',function( d ){
-        console.log(d);
+        // console.log(d);
 
         tooltips.select('.ep-num').html( "Ep number: " +  d.name )
         tooltips.select('.season-part').html( "Part of the season: " +  d.className )
