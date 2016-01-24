@@ -76,9 +76,12 @@ var makeChart = function(data) {
     /*---------------------------------------------------------------
     set width + height
     ---------------------------------------------------------------*/
+    var test = 800,
+        prod = 200;
+
     var w = 625,
-        h = 100,
-        p = 25;
+        h = prod, // prod,
+        p = 35;
 
 
     console.log(dataArry);
@@ -99,10 +102,20 @@ var makeChart = function(data) {
         .range([h - p, p]);
 
     var rScale = d3.scale.linear().nice()
-        .domain([0, d3.max(dataArry, function(d){
+        .domain([0, d3.max(dataArry, function(d) {
             return d[1];
         })])
-        .range([2,p - 5]); // use padding so it won't run off the page
+        .range([2, p - 5]); // use padding so it won't run off the page
+
+    var xAxis = d3.svg.axis()
+        .scale(xScale)
+        .orient("bottom")
+        .ticks(dataArry.length);
+
+    var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .orient("left")
+        .ticks(dataArry.length)
 
     /*---------------------------------------------------------------
     chart | iPOLITICS RED: #751C1E ***or*** (117,28,30)
@@ -125,7 +138,7 @@ var makeChart = function(data) {
         .attr('cy', function(d) {
             return yScale(d[1]);
         })
-        .attr('r', function(d){
+        .attr('r', function(d) {
             return rScale(d[1]);
         })
 
@@ -155,9 +168,18 @@ var makeChart = function(data) {
     axes: D3’s axes are actually functions whose parameters you define
     ---------------------------------------------------------------*/
 
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom');
+    // xAxis is defined at the top, with the r + x/yScale
+
+    svg.append('g')
+        .attr('class', 'axis')
+        .attr("transform", "translate(0," + (h - p) + ")")
+        .call(xAxis);
+    //D3’s call() function takes a selection as input and hands that selection off to any function. 
+
+    svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(' + p + ',0)')
+        .call(yAxis)
 };
 
 
