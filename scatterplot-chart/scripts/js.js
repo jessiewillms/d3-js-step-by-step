@@ -126,9 +126,23 @@ var makeChart = function(data) {
         .attr('height', h);
 
     /*---------------------------------------------------------------
+    create tooltops to show the values of each bubble
+    ---------------------------------------------------------------*/
+
+    var tooltips = d3.select('.chart')
+        .append('div')
+        .attr('class', 'tooltip')
+        .attr('fill', 'black')
+
+    tooltips.append('div')
+        .attr('class', 'label')
+
+    /*---------------------------------------------------------------
     circles for the chart
     ---------------------------------------------------------------*/
-    svg.selectAll('circle')
+    var getCircles = svg.selectAll('circle');
+
+    getCircles
         .data(dataArry) // use array of arrays, not the object
         .enter() // this goes back and gets *all* the data
         .append('circle')
@@ -143,26 +157,45 @@ var makeChart = function(data) {
         })
 
     /*---------------------------------------------------------------
-    labels
+    create mouse on + mouse off
     ---------------------------------------------------------------*/
-    svg.selectAll('text')
-        .data(dataArry)
-        .enter()
-        .append('text') // add the text, *then* manipulate
-        .text(function(d) {
-            return d[0] + ', ' + d[1];
+
+        .on('mouseover', function(d) {
+            tooltips.select('.label').html(d[0] + ', ' + d[1]);
+            tooltips.style('display', 'block');
         })
-        // positions the text
-        .attr('x', function(d) {
-            return xScale(d[0]);
-        })
-        .attr('y', function(d) {
-            return yScale(d[1]);
-        })
-        // styles the text
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "11px")
-        .attr("fill", "red");
+
+        .on('mouseout', function(d) {
+            tooltips.style('display', 'none');
+        });
+
+
+    /*---------------------------------------------------------------
+    labels—only show if on small screens
+    ---------------------------------------------------------------*/
+    if ($(window).width() < 375) {
+        svg.selectAll('text')
+            .data(dataArry)
+            .enter()
+            .append('text') // add the text, *then* manipulate
+            .text(function(d) {
+                return d[0] + ', ' + d[1];
+            })
+            // positions the text
+            .attr('x', function(d) {
+                return xScale(d[0]);
+            })
+            .attr('y', function(d) {
+                return yScale(d[1]);
+            })
+            // styles the text
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11px")
+            .attr("fill", "black");
+    };
+
+
+
 
     /*---------------------------------------------------------------
     axes: D3’s axes are actually functions whose parameters you define
@@ -180,6 +213,9 @@ var makeChart = function(data) {
         .attr('class', 'axis')
         .attr('transform', 'translate(' + p + ',0)')
         .call(yAxis)
+
+
+
 };
 
 
